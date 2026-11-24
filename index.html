@@ -9,260 +9,214 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
 <style>
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+*{box-sizing:border-box;margin:0;padding:0}
+
+html,body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#0b1720;
+    color:#fff
 }
 
-html, body {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    font-family: Arial, Helvetica, sans-serif;
-    background: #0b1720;
-    color: white;
+.app{
+    width:100%;
+    height:100dvh;
+    display:flex;
+    flex-direction:column
 }
 
-.app {
-    width: 100%;
-    height: 100dvh;
-    display: flex;
-    flex-direction: column;
+.header{
+    background:#0c1821;
+    padding:12px 16px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    z-index:1000;
+    border-bottom:1px solid #263b49
 }
 
-.header {
-    background: #0c1821;
-    padding: 12px 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    z-index: 1000;
-    border-bottom: 1px solid #263b49;
+.brand{
+    display:flex;
+    flex-direction:column;
+    gap:3px
 }
 
-.brand {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
+.brand-title{
+    font-size:17px;
+    font-weight:900;
+    letter-spacing:1px
 }
 
-.brand-title {
-    font-size: 17px;
-    font-weight: 900;
-    letter-spacing: 1px;
+.brand-subtitle{
+    font-size:10px;
+    color:#9eabb5;
+    letter-spacing:2px
 }
 
-.brand-subtitle {
-    font-size: 10px;
-    color: #9eabb5;
-    letter-spacing: 2px;
+.live{
+    background:#143b2c;
+    color:#3ee68b;
+    border:1px solid #2b8056;
+    padding:6px 10px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:bold
 }
 
-.live {
-    background: #143b2c;
-    color: #3ee68b;
-    border: 1px solid #2b8056;
-    padding: 6px 10px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: bold;
+.dashboard{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    background:#101f2b;
+    border-bottom:1px solid #263b49;
+    z-index:1000
 }
 
-.dashboard {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    background: #101f2b;
-    border-bottom: 1px solid #263b49;
-    z-index: 1000;
+.stat{
+    padding:10px 8px;
+    text-align:center;
+    border-right:1px solid #263b49
 }
 
-.stat {
-    padding: 10px 8px;
-    text-align: center;
-    border-right: 1px solid #263b49;
+.stat-label{
+    font-size:9px;
+    color:#9eabb5;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    margin-bottom:5px
 }
 
-.stat-label {
-    font-size: 9px;
-    color: #9eabb5;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 5px;
+.stat-value{
+    font-size:16px;
+    font-weight:bold
 }
 
-.stat-value {
-    font-size: 16px;
-    font-weight: bold;
+.stat-value.small{
+    font-size:12px
 }
 
-.stat-value.small {
-    font-size: 12px;
+#gpsStatus{color:#f5bd45}
+#trackStatus{color:#aaa}
+#distance{color:#54d8ff}
+#speed{color:white}
+
+.warning{
+    display:none;
+    padding:10px;
+    text-align:center;
+    font-size:13px;
+    font-weight:bold;
+    background:#b52c2c;
+    color:white;
+    z-index:1000
 }
 
-#gpsStatus {
-    color: #f5bd45;
+.warning.active{display:block}
+
+#map{
+    flex:1;
+    width:100%;
+    min-height:0
 }
 
-#trackStatus {
-    color: #aaa;
+.controls{
+    background:#0c1821;
+    padding:10px;
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:7px;
+    z-index:1000;
+    border-top:1px solid #263b49
 }
 
-#distance {
-    color: #54d8ff;
+.btn{
+    padding:11px 5px;
+    border:none;
+    border-radius:8px;
+    background:#1c3445;
+    color:white;
+    font-weight:bold;
+    font-size:11px;
+    cursor:pointer;
+    transition:.2s
 }
 
-#speed {
-    color: white;
+.btn:hover{background:#31566c}
+.btn.active{background:#117d4b}
+.btn.sos{background:#c62828}
+.btn.sos:hover{background:#e53935}
+
+.footer{
+    background:#0c1821;
+    color:#81929f;
+    text-align:center;
+    font-size:9px;
+    padding:5px
 }
 
-.warning {
-    display: none;
-    padding: 10px;
-    text-align: center;
-    font-size: 13px;
-    font-weight: bold;
-    background: #b52c2c;
-    color: white;
-    z-index: 1000;
+.vehicle-marker{
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    background:#087cf0;
+    border:4px solid white;
+    box-shadow:0 0 0 5px rgba(8,124,240,.25);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:20px
 }
 
-.warning.active {
-    display: block;
+.start-marker{
+    background:#14a44d;
+    color:white;
+    border-radius:8px;
+    padding:7px 10px;
+    font-weight:bold;
+    font-size:12px;
+    border:2px solid white;
+    white-space:nowrap
 }
 
-#map {
-    flex: 1;
-    width: 100%;
-    min-height: 0;
+.finish-marker{
+    background:#d62828;
+    color:white;
+    border-radius:8px;
+    padding:7px 10px;
+    font-weight:bold;
+    font-size:12px;
+    border:2px solid white;
+    white-space:nowrap
 }
 
-.controls {
-    background: #0c1821;
-    padding: 10px;
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 7px;
-    z-index: 1000;
-    border-top: 1px solid #263b49;
+.leaflet-control-attribution{
+    font-size:9px!important
 }
 
-.btn {
-    padding: 11px 5px;
-    border: none;
-    border-radius: 8px;
-    background: #1c3445;
-    color: white;
-    font-weight: bold;
-    font-size: 11px;
-    cursor: pointer;
-    transition: .2s;
-}
+@media(max-width:600px){
 
-.btn:hover {
-    background: #31566c;
-}
+    .header{padding:10px 12px}
 
-.btn.active {
-    background: #117d4b;
-}
+    .brand-title{font-size:14px}
+    .brand-subtitle{font-size:8px}
 
-.btn.sos {
-    background: #c62828;
-}
+    .stat{padding:8px 3px}
+    .stat-label{font-size:8px}
+    .stat-value{font-size:14px}
 
-.btn.sos:hover {
-    background: #e53935;
-}
-
-.footer {
-    background: #0c1821;
-    color: #81929f;
-    text-align: center;
-    font-size: 9px;
-    padding: 5px;
-}
-
-.vehicle-marker {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    background: #087cf0;
-    border: 4px solid white;
-    box-shadow: 0 0 0 5px rgba(8,124,240,.25);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-}
-
-.start-marker {
-    background: #14a44d;
-    color: white;
-    border-radius: 8px;
-    padding: 7px 10px;
-    font-weight: bold;
-    font-size: 12px;
-    border: 2px solid white;
-    white-space: nowrap;
-}
-
-.finish-marker {
-    background: #d62828;
-    color: white;
-    border-radius: 8px;
-    padding: 7px 10px;
-    font-weight: bold;
-    font-size: 12px;
-    border: 2px solid white;
-    white-space: nowrap;
-}
-
-.leaflet-control-attribution {
-    font-size: 9px !important;
-}
-
-@media (max-width: 600px) {
-
-    .header {
-        padding: 10px 12px;
+    .controls{
+        gap:5px;
+        padding:7px
     }
 
-    .brand-title {
-        font-size: 14px;
+    .btn{
+        padding:12px 2px;
+        font-size:9px;
+        border-radius:6px
     }
 
-    .brand-subtitle {
-        font-size: 8px;
-    }
-
-    .stat {
-        padding: 8px 3px;
-    }
-
-    .stat-label {
-        font-size: 8px;
-    }
-
-    .stat-value {
-        font-size: 14px;
-    }
-
-    .controls {
-        grid-template-columns: repeat(5, 1fr);
-        gap: 5px;
-        padding: 7px;
-    }
-
-    .btn {
-        padding: 12px 2px;
-        font-size: 9px;
-        border-radius: 6px;
-    }
-
-    .footer {
-        font-size: 8px;
-    }
+    .footer{font-size:8px}
 }
 </style>
 </head>
@@ -271,72 +225,72 @@ html, body {
 
 <div class="app">
 
-    <header class="header">
-        <div class="brand">
-            <div class="brand-title">🚙 OFFROAD ADVENTURE</div>
-            <div class="brand-subtitle">LIVE GPS TRACKING SYSTEM</div>
-        </div>
-
-        <div class="live">● LIVE MAP</div>
-    </header>
-
-    <section class="dashboard">
-
-        <div class="stat">
-            <div class="stat-label">GPS</div>
-            <div class="stat-value small" id="gpsStatus">WAITING</div>
-        </div>
-
-        <div class="stat">
-            <div class="stat-label">TRACK STATUS</div>
-            <div class="stat-value small" id="trackStatus">--</div>
-        </div>
-
-        <div class="stat">
-            <div class="stat-label">DISTANCE TO TRACK</div>
-            <div class="stat-value" id="distance">-- m</div>
-        </div>
-
-        <div class="stat">
-            <div class="stat-label">SPEED</div>
-            <div class="stat-value" id="speed">0 km/h</div>
-        </div>
-
-    </section>
-
-    <div class="warning" id="offtrackWarning">
-        ⚠️ PERHATIAN! ANDA KELUAR DARI JALUR OFFROAD
+<header class="header">
+    <div class="brand">
+        <div class="brand-title">🚙 OFFROAD ADVENTURE</div>
+        <div class="brand-subtitle">LIVE GPS TRACKING SYSTEM</div>
     </div>
 
-    <div id="map"></div>
+    <div class="live">● LIVE MAP</div>
+</header>
 
-    <section class="controls">
+<section class="dashboard">
 
-        <button class="btn" onclick="locateMe()">
-            📍 LOKASI
-        </button>
+    <div class="stat">
+        <div class="stat-label">GPS</div>
+        <div class="stat-value small" id="gpsStatus">WAITING</div>
+    </div>
 
-        <button class="btn" id="followBtn" onclick="toggleFollow()">
-            🧭 FOLLOW
-        </button>
+    <div class="stat">
+        <div class="stat-label">TRACK STATUS</div>
+        <div class="stat-value small" id="trackStatus">--</div>
+    </div>
 
-        <button class="btn" onclick="fitRoute()">
-            🗺️ RUTE
-        </button>
+    <div class="stat">
+        <div class="stat-label">DISTANCE TO TRACK</div>
+        <div class="stat-value" id="distance">-- m</div>
+    </div>
 
-        <button class="btn" onclick="toggleFullscreen()">
-            ⛶ FULL
-        </button>
+    <div class="stat">
+        <div class="stat-label">SPEED</div>
+        <div class="stat-value" id="speed">0 km/h</div>
+    </div>
 
-        <button class="btn sos" onclick="sendSOS()">
-            🆘 SOS
-        </button>
+</section>
 
-    </section>
+<div class="warning" id="offtrackWarning">
+    ⚠️ PERHATIAN! ANDA KELUAR DARI JALUR OFFROAD
+</div>
 
-    <footer class="footer">
-        OFFROAD ADVENTURE LIVE MAP • OPENSTREETMAP
-    </footer>
+<div id="map"></div>
+
+<section class="controls">
+
+    <button class="btn" onclick="locateMe()">
+        📍 LOKASI
+    </button>
+
+    <button class="btn" id="followBtn" onclick="toggleFollow()">
+        🧭 FOLLOW
+    </button>
+
+    <button class="btn" onclick="fitRoute()">
+        🗺️ RUTE
+    </button>
+
+    <button class="btn" onclick="toggleFullscreen()">
+        ⛶ FULL
+    </button>
+
+    <button class="btn sos" onclick="sendSOS()">
+        🆘 SOS
+    </button>
+
+</section>
+
+<footer class="footer">
+    OFFROAD ADVENTURE LIVE MAP • OPENSTREETMAP
+</footer>
 
 </div>
 
@@ -345,139 +299,238 @@ html, body {
 <script>
 
 // =====================================================
-// DATA JALUR OFFROAD
+// DATA RUTE OFFROAD ASLI
 // =====================================================
 
-// PENTING:
-// GANTI BAGIAN INI DENGAN routeData DARI HTML V1 ANDA.
-// Jangan mengubah koordinat jalur yang sudah ada.
-//
-// Contoh:
-// const routeData = {...};
-
 const routeData = {
-    "type": "FeatureCollection",
-    "features": []
+"type":"FeatureCollection",
+"features":[
+{
+"type":"Feature",
+"properties":{
+"name":"Jalur Offroad",
+"source":"Converted from KML polygon exterior ring",
+"route_type":"closed_loop"
+},
+"geometry":{
+"type":"LineString",
+"coordinates":[
+[112.6468641056223,-8.02405571159913],
+[112.6471228174005,-8.024024934491628],
+[112.6475541494115,-8.024055788943356],
+[112.649022925752,-8.024397528330915],
+[112.6494715889737,-8.024471778576984],
+[112.64955690546,-8.024447672659363],
+[112.649788866718,-8.024505339088334],
+[112.6500903733637,-8.024614229738486],
+[112.6506035213972,-8.024822503885316],
+[112.6517244404352,-8.025297375395944],
+[112.6517936252248,-8.02525734313796],
+[112.6518533276929,-8.02509510227527],
+[112.6519881075373,-8.02452107894371],
+[112.6527204467581,-8.024706823776558],
+[112.6531774302797,-8.02487599499723],
+[112.6539034806968,-8.025299546468172],
+[112.6540840523883,-8.025380800762509],
+[112.65431587685,-8.025361295378241],
+[112.6549982465858,-8.025213984720104],
+[112.6558243553668,-8.024910089879791],
+[112.6561068061422,-8.02479473048366],
+[112.6563051120953,-8.024760496709156],
+[112.6566236014859,-8.02476013888954],
+[112.6568773164616,-8.024779196485857],
+[112.6570009826421,-8.024653339357462],
+[112.6570934070311,-8.02436830163515],
+[112.6571377148867,-8.024127194679519],
+[112.6576331953546,-8.024050706186072],
+[112.657887097588,-8.02397583305976],
+[112.6580448886443,-8.023904178460178],
+[112.658378428341,-8.023859168105126],
+[112.6587867798256,-8.023871863680558],
+[112.6600977201238,-8.024272104319055],
+[112.6603849283313,-8.023759687581665],
+[112.6606067537485,-8.02377396001981],
+[112.6609995263986,-8.02387388223521],
+[112.6612824381772,-8.023938717097964],
+[112.661634256315,-8.023929694203842],
+[112.6623513234773,-8.024042884852651],
+[112.6625331474759,-8.023995198952328],
+[112.6635202215284,-8.024144299091457],
+[112.6637776345941,-8.024171704847648],
+[112.663994275648,-8.023710323500476],
+[112.6642832040478,-8.022974470403328],
+[112.6637196150689,-8.022756451176221],
+[112.6634366015288,-8.022616167370936],
+[112.66291917597,-8.022434318691147],
+[112.662284914787,-8.022168934177959],
+[112.6621325590361,-8.022433506590335],
+[112.6616751226824,-8.022277867330855],
+[112.661148669616,-8.022125329372974],
+[112.6607055333691,-8.021950087072254],
+[112.6605311446391,-8.022226074152375],
+[112.6601452462754,-8.022159858837538],
+[112.660008239703,-8.022203461393767],
+[112.6598575168558,-8.022167526908282],
+[112.6596647671732,-8.022113836956411],
+[112.6594540847745,-8.022132763607711],
+[112.6592721523514,-8.02218407594699],
+[112.6590825481437,-8.022243385175097],
+[112.6588850544844,-8.022202138662745],
+[112.6586923880286,-8.02221228554687],
+[112.6586313222428,-8.022281268829019],
+[112.6585473750807,-8.022373616309201],
+[112.6584976178286,-8.022406386804777],
+[112.6582254621935,-8.022402210854509],
+[112.657728811039,-8.022304052359976],
+[112.6571015429825,-8.022315822761472],
+[112.6564470103877,-8.02230600513414],
+[112.6560176690909,-8.022338059841323],
+[112.6558383673108,-8.022823835076707],
+[112.6557563449536,-8.023157999965202],
+[112.655672531048,-8.023530508696334],
+[112.655543867309,-8.023859239057414],
+[112.6551697118327,-8.023977212147205],
+[112.6545860421748,-8.023921154599796],
+[112.6543926641438,-8.023827585847847],
+[112.6533315692105,-8.023524109993213],
+[112.6534723319402,-8.023078827628726],
+[112.653810819331,-8.023007350728824],
+[112.654520745123,-8.022342076035752],
+[112.6544830922492,-8.022240552690475],
+[112.6539908465771,-8.02253441039636],
+[112.6539355114555,-8.022482957760587],
+[112.6537187819165,-8.022633962252383],
+[112.653492058153,-8.022783792870328],
+[112.6530499767106,-8.02282800496021],
+[112.653035708718,-8.02277879773832],
+[112.6533457390998,-8.022508702142389],
+[112.6533263740009,-8.022383608390633],
+[112.6535547518984,-8.021887526152383],
+[112.6539287909301,-8.021901746018457],
+[112.6543784209448,-8.022048573090174],
+[112.6547332433471,-8.022102556063984],
+[112.6549745476364,-8.022015445143506],
+[112.6550546614047,-8.021922911501017],
+[112.6557366808928,-8.021499607547918],
+[112.6557911244434,-8.021311615622796],
+[112.6556194187603,-8.021298753682657],
+[112.6553320605894,-8.021356352020222],
+[112.6551579591904,-8.021257175963218],
+[112.65525125433,-8.020822846339568],
+[112.6548782922582,-8.020756869033397],
+[112.6549853901433,-8.020431576222688],
+[112.6552972192925,-8.02042228506192],
+[112.6555718469228,-8.020259549719404],
+[112.6558482747077,-8.020055630491012],
+[112.6563711746844,-8.019836397578619],
+[112.6565667142519,-8.019582360355656],
+[112.6566918545278,-8.01890590407279],
+[112.6562317744747,-8.018770086584924],
+[112.6560165374643,-8.017807281244197],
+[112.6562067340943,-8.017719517410804],
+[112.656597949539,-8.017676664484938],
+[112.6565956900585,-8.017565766293531],
+[112.6564868256472,-8.017457438144632],
+[112.6563077687606,-8.017419798254565],
+[112.6560470828359,-8.017414415121054],
+[112.6551528532426,-8.017169322371746],
+[112.6539724985712,-8.017098879015045],
+[112.6523605339638,-8.01673619978928],
+[112.6512696156159,-8.016256118977932],
+[112.6504414825968,-8.016043788116932],
+[112.6496780535377,-8.015925337438501],
+[112.6485067590981,-8.015475549646172],
+[112.6465202816204,-8.014698451316027],
+[112.6456317354693,-8.014268694966447],
+[112.6456028462659,-8.015260088844409],
+[112.6456873290093,-8.016166076361095],
+[112.6460355404305,-8.017338471750147],
+[112.6460773534389,-8.017839617057813],
+[112.645848024517,-8.019064322036646],
+[112.6457515013426,-8.020249533478818],
+[112.6464787794829,-8.021861652205043],
+[112.6470036905221,-8.023566783067636],
+[112.6470919916939,-8.023941521210476],
+[112.6468641056223,-8.02405571159913]
+]
+}
+}
+]
 };
 
 // =====================================================
-// KONFIGURASI
+// CONFIGURATION
 // =====================================================
 
 const OFFTRACK_THRESHOLD = 50;
 
-// Nomor WhatsApp panitia SOS.
-// Format: 628xxxxxxxxxx
-// Kosongkan jika belum tersedia.
+// SOS WhatsApp nomor panitia.
+// Format internasional tanpa +.
+// Contoh: 6281234567890
+// Kosongkan jika belum ditentukan.
 const SOS_PHONE = "";
 
 // =====================================================
-// MAP
+// MAP INITIALIZATION
 // =====================================================
 
 const map = L.map('map', {
-    zoomControl: true,
-    preferCanvas: true
+    zoomControl:true,
+    preferCanvas:true
 });
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; OpenStreetMap'
-}).addTo(map);
+L.tileLayer(
+    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    {
+        maxZoom:19,
+        attribution:'© OpenStreetMap'
+    }
+).addTo(map);
 
 // =====================================================
 // ROUTE
 // =====================================================
 
-let routeLayer = null;
-let routeCoordinates = [];
+const route = L.geoJSON(routeData,{
+    style:{
+        color:'#00d4ff',
+        weight:6,
+        opacity:0.9
+    }
+}).addTo(map);
 
-if (routeData.features && routeData.features.length > 0) {
+map.fitBounds(route.getBounds(),{
+    padding:[40,40]
+});
 
-    routeLayer = L.geoJSON(routeData, {
-        style: {
-            color: '#00d4ff',
-            weight: 6,
-            opacity: 0.9
-        }
-    }).addTo(map);
+setTimeout(()=>{
+    map.invalidateSize();
+},500);
 
-    routeData.features.forEach(feature => {
+const coords = routeData.features[0].geometry.coordinates;
 
-        if (feature.geometry.type === "LineString") {
-
-            routeCoordinates = feature.geometry.coordinates.map(
-                coord => [coord[1], coord[0]]
-            );
-
-        }
-
-        if (feature.geometry.type === "MultiLineString") {
-
-            feature.geometry.coordinates.forEach(line => {
-
-                line.forEach(coord => {
-                    routeCoordinates.push([coord[1], coord[0]]);
-                });
-
-            });
-
-        }
-
-    });
-
-    map.fitBounds(routeLayer.getBounds(), {
-        padding: [40, 40]
-    });
-
-} else {
-
-    map.setView([-8.024, 112.647], 15);
-
-}
-
-// =====================================================
 // START & FINISH
-// =====================================================
 
-if (routeCoordinates.length > 0) {
+const start = coords[0];
+const finish = coords[coords.length-1];
 
-    const start = routeCoordinates[0];
-    const finish = routeCoordinates[routeCoordinates.length - 1];
+L.marker([start[1],start[0]])
+    .addTo(map)
+    .bindPopup('🏁 START / LOOP');
 
-    const startIcon = L.divIcon({
-        className: '',
-        html: '<div class="start-marker">🏁 START</div>',
-        iconSize: [70, 30],
-        iconAnchor: [35, 15]
-    });
-
-    const finishIcon = L.divIcon({
-        className: '',
-        html: '<div class="finish-marker">🏁 FINISH</div>',
-        iconSize: [80, 30],
-        iconAnchor: [40, 15]
-    });
-
-    L.marker(start, {
-        icon: startIcon
-    }).addTo(map);
-
-    L.marker(finish, {
-        icon: finishIcon
-    }).addTo(map);
-
-}
+L.marker([finish[1],finish[0]])
+    .addTo(map)
+    .bindPopup('🏁 FINISH / LOOP');
 
 // =====================================================
-// GPS MARKER
+// VEHICLE MARKER
 // =====================================================
 
 const vehicleIcon = L.divIcon({
-    className: '',
-    html: '<div class="vehicle-marker">🚙</div>',
-    iconSize: [42, 42],
-    iconAnchor: [21, 21]
+    className:'',
+    html:'<div class="vehicle-marker">🚙</div>',
+    iconSize:[42,42],
+    iconAnchor:[21,21]
 });
 
 let vehicleMarker = null;
@@ -487,87 +540,189 @@ let followGPS = false;
 let gpsWatch = null;
 
 // =====================================================
+// DISTANCE CALCULATION
+// =====================================================
+
+function distanceMeters(lat1,lon1,lat2,lon2){
+
+    const R=6371000;
+
+    const dLat=(lat2-lat1)*Math.PI/180;
+    const dLon=(lon2-lon1)*Math.PI/180;
+
+    const a=
+        Math.sin(dLat/2)**2+
+        Math.cos(lat1*Math.PI/180)*
+        Math.cos(lat2*Math.PI/180)*
+        Math.sin(dLon/2)**2;
+
+    return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+
+// Distance point to line segment
+
+function distanceToSegment(point,start,end){
+
+    const lat=point[0];
+    const lng=point[1];
+
+    const lat1=start[0];
+    const lng1=start[1];
+
+    const lat2=end[0];
+    const lng2=end[1];
+
+    const meanLat=lat*Math.PI/180;
+
+    const x=(lng-lng1)*111320*Math.cos(meanLat);
+    const y=(lat-lat1)*111320;
+
+    const dx=(lng2-lng1)*111320*Math.cos(meanLat);
+    const dy=(lat2-lat1)*111320;
+
+    const lengthSquared=dx*dx+dy*dy;
+
+    if(lengthSquared===0){
+        return Math.sqrt(x*x+y*y);
+    }
+
+    let t=(x*dx+y*dy)/lengthSquared;
+
+    t=Math.max(0,Math.min(1,t));
+
+    const closestX=t*dx;
+    const closestY=t*dy;
+
+    const distanceX=x-closestX;
+    const distanceY=y-closestY;
+
+    return Math.sqrt(
+        distanceX*distanceX+
+        distanceY*distanceY
+    );
+}
+
+// Distance to route
+
+function distanceToRoute(lat,lng){
+
+    if(coords.length<2)return null;
+
+    let minimumDistance=Infinity;
+
+    const point=[lat,lng];
+
+    for(let i=0;i<coords.length-1;i++){
+
+        const start=[
+            coords[i][1],
+            coords[i][0]
+        ];
+
+        const end=[
+            coords[i+1][1],
+            coords[i+1][0]
+        ];
+
+        const distance=distanceToSegment(
+            point,
+            start,
+            end
+        );
+
+        if(distance<minimumDistance){
+            minimumDistance=distance;
+        }
+    }
+
+    return minimumDistance;
+}
+
+// =====================================================
 // GPS
 // =====================================================
 
-function startGPS() {
+function startGPS(){
 
-    if (!navigator.geolocation) {
+    if(!navigator.geolocation){
 
-        document.getElementById('gpsStatus').innerText =
-            "NOT SUPPORTED";
+        document.getElementById('gpsStatus').innerText=
+            'NOT SUPPORTED';
 
         return;
-
     }
 
-    document.getElementById('gpsStatus').innerText =
-        "SEARCHING";
+    if(gpsWatch!==null)return;
 
-    gpsWatch = navigator.geolocation.watchPosition(
+    document.getElementById('gpsStatus').innerText=
+        'SEARCHING';
+
+    gpsWatch=navigator.geolocation.watchPosition(
 
         gpsSuccess,
 
         gpsError,
 
         {
-            enableHighAccuracy: true,
-            maximumAge: 1000,
-            timeout: 15000
+            enableHighAccuracy:true,
+            maximumAge:1000,
+            timeout:15000
         }
 
     );
-
 }
 
-function gpsSuccess(position) {
+function gpsSuccess(position){
 
-    const lat = position.coords.latitude;
-    const lng = position.coords.longitude;
+    const lat=position.coords.latitude;
+    const lng=position.coords.longitude;
 
-    currentPosition = {
-        lat: lat,
-        lng: lng
+    currentPosition={
+        lat:lat,
+        lng:lng
     };
 
-    const latlng = [lat, lng];
+    const latlng=[lat,lng];
 
-    document.getElementById('gpsStatus').innerText =
-        "ACTIVE";
+    // GPS STATUS
 
-    document.getElementById('gpsStatus').style.color =
-        "#3ee68b";
+    const gpsStatus=document.getElementById('gpsStatus');
+
+    gpsStatus.innerText='ACTIVE';
+    gpsStatus.style.color='#3ee68b';
 
     // VEHICLE MARKER
 
-    if (!vehicleMarker) {
+    if(!vehicleMarker){
 
-        vehicleMarker = L.marker(latlng, {
-            icon: vehicleIcon,
-            zIndexOffset: 1000
+        vehicleMarker=L.marker(latlng,{
+            icon:vehicleIcon,
+            zIndexOffset:1000
         }).addTo(map);
 
-    } else {
+        vehicleMarker.bindPopup('🚙 Posisi Anda');
+
+    }else{
 
         vehicleMarker.setLatLng(latlng);
 
     }
 
-    // ACCURACY CIRCLE
+    // GPS ACCURACY
 
-    const accuracy = position.coords.accuracy || 10;
+    const accuracy=position.coords.accuracy||10;
 
-    if (!accuracyCircle) {
+    if(!accuracyCircle){
 
-        accuracyCircle = L.circle(latlng, {
-            radius: accuracy,
-            color: '#1685ff',
-            fillColor: '#1685ff',
-            fillOpacity: 0.12,
-            weight: 1
+        accuracyCircle=L.circle(latlng,{
+            radius:accuracy,
+            color:'#1685ff',
+            fillColor:'#1685ff',
+            fillOpacity:0.12,
+            weight:1
         }).addTo(map);
 
-    } else {
+    }else{
 
         accuracyCircle.setLatLng(latlng);
         accuracyCircle.setRadius(accuracy);
@@ -576,171 +731,80 @@ function gpsSuccess(position) {
 
     // SPEED
 
-    let speed = position.coords.speed;
+    let speed=position.coords.speed;
 
-    if (speed === null || speed === undefined) {
-        speed = 0;
+    if(speed===null||speed===undefined){
+        speed=0;
     }
 
-    speed = speed * 3.6;
+    speed=speed*3.6;
 
-    document.getElementById('speed').innerText =
-        speed.toFixed(1) + " km/h";
+    document.getElementById('speed').innerText=
+        speed.toFixed(1)+' km/h';
 
-    // DISTANCE TO ROUTE
+    // DISTANCE TO TRACK
 
-    const distance = distanceToRoute(lat, lng);
+    const distance=distanceToRoute(lat,lng);
 
-    document.getElementById('distance').innerText =
-        distance === null
-            ? "-- m"
-            : distance.toFixed(0) + " m";
+    document.getElementById('distance').innerText=
+        distance===null
+            ?'-- m'
+            :distance.toFixed(0)+' m';
 
     // TRACK STATUS
 
-    if (distance === null) {
+    const trackStatus=
+        document.getElementById('trackStatus');
 
-        document.getElementById('trackStatus').innerText =
-            "NO ROUTE";
+    const warning=
+        document.getElementById('offtrackWarning');
 
-    } else if (distance <= OFFTRACK_THRESHOLD) {
+    if(distance===null){
 
-        document.getElementById('trackStatus').innerText =
-            "ON TRACK";
+        trackStatus.innerText='NO ROUTE';
+        trackStatus.style.color='#aaa';
 
-        document.getElementById('trackStatus').style.color =
-            "#3ee68b";
+        warning.classList.remove('active');
 
-        document.getElementById('offtrackWarning')
-            .classList.remove('active');
+    }else if(distance<=OFFTRACK_THRESHOLD){
 
-    } else {
+        trackStatus.innerText='ON TRACK';
+        trackStatus.style.color='#3ee68b';
 
-        document.getElementById('trackStatus').innerText =
-            "OFF TRACK";
+        warning.classList.remove('active');
 
-        document.getElementById('trackStatus').style.color =
-            "#ff4444";
+    }else{
 
-        document.getElementById('offtrackWarning')
-            .classList.add('active');
+        trackStatus.innerText='OFF TRACK';
+        trackStatus.style.color='#ff4444';
 
-    }
-
-    // FOLLOW GPS
-
-    if (followGPS) {
-
-        map.setView(latlng, Math.max(map.getZoom(), 16), {
-            animate: true
-        });
+        warning.classList.add('active');
 
     }
 
-}
+    // GPS FOLLOW
 
-function gpsError(error) {
+    if(followGPS){
 
-    document.getElementById('gpsStatus').innerText =
-        "GPS ERROR";
-
-    document.getElementById('gpsStatus').style.color =
-        "#ff4444";
-
-}
-
-// =====================================================
-// DISTANCE CALCULATION
-// =====================================================
-
-function distanceMeters(lat1, lon1, lat2, lon2) {
-
-    const R = 6371000;
-
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-
-    const a =
-        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(lat1 * Math.PI / 180) *
-        Math.cos(lat2 * Math.PI / 180) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
-
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-    return R * c;
-
-}
-
-// =====================================================
-// DISTANCE TO LINE SEGMENT
-// =====================================================
-
-function distanceToSegment(point, start, end) {
-
-    const lat = point[0];
-    const lng = point[1];
-
-    const lat1 = start[0];
-    const lng1 = start[1];
-
-    const lat2 = end[0];
-    const lng2 = end[1];
-
-    const meanLat = lat * Math.PI / 180;
-
-    const x = (lng - lng1) * 111320 * Math.cos(meanLat);
-    const y = (lat - lat1) * 111320;
-
-    const dx = (lng2 - lng1) * 111320 * Math.cos(meanLat);
-    const dy = (lat2 - lat1) * 111320;
-
-    const lengthSquared = dx * dx + dy * dy;
-
-    if (lengthSquared === 0) {
-        return Math.sqrt(x * x + y * y);
-    }
-
-    let t = (x * dx + y * dy) / lengthSquared;
-
-    t = Math.max(0, Math.min(1, t));
-
-    const closestX = t * dx;
-    const closestY = t * dy;
-
-    const distanceX = x - closestX;
-    const distanceY = y - closestY;
-
-    return Math.sqrt(distanceX * distanceX + distanceY * distanceY);
-
-}
-
-function distanceToRoute(lat, lng) {
-
-    if (routeCoordinates.length < 2) {
-        return null;
-    }
-
-    let minimumDistance = Infinity;
-
-    const point = [lat, lng];
-
-    for (let i = 0; i < routeCoordinates.length - 1; i++) {
-
-        const distance = distanceToSegment(
-            point,
-            routeCoordinates[i],
-            routeCoordinates[i + 1]
+        map.setView(
+            latlng,
+            Math.max(map.getZoom(),16),
+            {animate:true}
         );
-
-        if (distance < minimumDistance) {
-            minimumDistance = distance;
-        }
-
     }
+}
 
-    return minimumDistance;
+// GPS ERROR
+
+function gpsError(error){
+
+    const gpsStatus=
+        document.getElementById('gpsStatus');
+
+    gpsStatus.innerText='GPS ERROR';
+    gpsStatus.style.color='#ff4444';
+
+    console.error(error);
 
 }
 
@@ -748,137 +812,133 @@ function distanceToRoute(lat, lng) {
 // BUTTONS
 // =====================================================
 
-function locateMe() {
+function locateMe(){
 
-    if (!currentPosition) {
+    if(!currentPosition){
 
-        alert("GPS belum mendapatkan lokasi. Pastikan GPS aktif.");
+        alert(
+            'GPS belum mendapatkan lokasi.\n' +
+            'Pastikan GPS HP aktif.'
+        );
+
+        startGPS();
 
         return;
-
     }
 
     map.setView([
         currentPosition.lat,
         currentPosition.lng
-    ], 17);
-
+    ],17);
 }
 
-function toggleFollow() {
+function toggleFollow(){
 
-    followGPS = !followGPS;
+    followGPS=!followGPS;
 
-    const button = document.getElementById('followBtn');
+    const button=
+        document.getElementById('followBtn');
 
-    if (followGPS) {
+    if(followGPS){
 
         button.classList.add('active');
-        button.innerText = "🧭 FOLLOW ON";
+        button.innerText='🧭 FOLLOW ON';
 
-        if (currentPosition) {
+        if(currentPosition){
 
             map.setView([
                 currentPosition.lat,
                 currentPosition.lng
-            ], 17);
+            ],17);
 
         }
 
-    } else {
+    }else{
 
         button.classList.remove('active');
-        button.innerText = "🧭 FOLLOW";
+        button.innerText='🧭 FOLLOW';
 
     }
-
 }
 
-function fitRoute() {
+function fitRoute(){
 
-    if (routeLayer) {
+    map.fitBounds(route.getBounds(),{
+        padding:[40,40]
+    });
+}
 
-        map.fitBounds(routeLayer.getBounds(), {
-            padding: [40, 40]
+function toggleFullscreen(){
+
+    const app=document.querySelector('.app');
+
+    if(!document.fullscreenElement){
+
+        app.requestFullscreen().catch(()=>{
+            alert('Fullscreen tidak tersedia pada browser ini.');
         });
 
-    }
-
-}
-
-function toggleFullscreen() {
-
-    const app = document.querySelector('.app');
-
-    if (!document.fullscreenElement) {
-
-        app.requestFullscreen().catch(() => {});
-
-    } else {
+    }else{
 
         document.exitFullscreen();
 
     }
-
 }
 
 // =====================================================
 // SOS
 // =====================================================
 
-function sendSOS() {
+function sendSOS(){
 
-    if (!currentPosition) {
+    if(!currentPosition){
 
-        alert("GPS belum aktif. Lokasi belum dapat dikirim.");
+        alert(
+            'GPS belum aktif.\n' +
+            'Lokasi belum dapat dikirim.'
+        );
 
         return;
-
     }
 
-    const lat = currentPosition.lat;
-    const lng = currentPosition.lng;
+    const lat=currentPosition.lat;
+    const lng=currentPosition.lng;
 
-    const mapsLink =
-        "https://maps.google.com/?q=" + lat + "," + lng;
+    const mapsLink=
+        'https://maps.google.com/?q='+lat+','+lng;
 
-    const message =
-        "🆘 SOS OFFROAD ADVENTURE\n\n" +
-        "Saya membutuhkan bantuan.\n\n" +
-        "📍 Lokasi:\n" +
-        mapsLink + "\n\n" +
-        "Koordinat:\n" +
-        lat + ", " + lng;
+    const message=
+        '🆘 SOS OFFROAD ADVENTURE\n\n'+
+        'Saya membutuhkan bantuan.\n\n'+
+        '📍 Lokasi:\n'+mapsLink+'\n\n'+
+        'Koordinat:\n'+lat+', '+lng;
 
-    if (SOS_PHONE !== "") {
+    if(SOS_PHONE!==""){
 
-        const whatsappURL =
-            "https://wa.me/" + SOS_PHONE +
-            "?text=" + encodeURIComponent(message);
+        const whatsappURL=
+            'https://wa.me/'+SOS_PHONE+
+            '?text='+encodeURIComponent(message);
 
-        window.open(whatsappURL, "_blank");
+        window.open(whatsappURL,'_blank');
 
-    } else {
+    }else{
 
-        if (confirm(
-            "Nomor panitia SOS belum diatur.\n\n" +
-            "Bagikan lokasi melalui WhatsApp?"
-        )) {
+        if(confirm(
+            'Nomor WhatsApp panitia belum diatur.\n\n'+
+            'Bagikan lokasi melalui WhatsApp?'
+        )){
 
             window.open(
-                "https://wa.me/?text=" +
+                'https://wa.me/?text='+
                 encodeURIComponent(message),
-                "_blank"
+                '_blank'
             );
-
         }
-
     }
-
 }
 
 // =====================================================
-// INITIALIZATION
+// START GPS
 // =====================================================
 
 startGPS();
