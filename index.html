@@ -1,19 +1,889 @@
+
 <!DOCTYPE html>
-<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"><title>Live Maps Offroad</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OFFROAD ADVENTURE LIVE MAP</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
 <style>
-*{box-sizing:border-box}html,body{margin:0;height:100%;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#081c2b;color:#fff}#app{height:100%;display:flex;flex-direction:column}.top{padding:14px 16px;background:linear-gradient(135deg,#092a42,#0877a8);z-index:1000}.top h1{margin:0;font-size:19px;letter-spacing:.4px}.top p{margin:4px 0 0;font-size:12px;opacity:.85}.stats{display:flex;gap:8px;padding:8px;background:#0b2638;z-index:1000}.stat{flex:1;background:#12394f;border-radius:10px;padding:9px 10px;min-width:0}.stat small{display:block;font-size:10px;opacity:.7;text-transform:uppercase}.stat strong{display:block;font-size:14px;margin-top:2px}#map{flex:1;min-height:300px;width:100%;display:block}.controls{display:flex;gap:8px;padding:10px;background:#081c2b;z-index:1000}.btn{border:0;border-radius:12px;padding:13px 12px;font-weight:700;flex:1;color:#fff;background:#0877a8;font-size:14px}.btn.secondary{background:#17445b}.btn:active{transform:scale(.98)}.note{padding:7px 12px;background:#0b2638;font-size:11px;opacity:.8;text-align:center}.leaflet-control-attribution{font-size:9px!important}.gps-dot{width:18px;height:18px;border-radius:50%;background:#1688ff;border:3px solid white;box-shadow:0 0 0 5px rgba(22,136,255,.25)}
-@media(min-width:800px){.top{padding:18px 24px}.top h1{font-size:24px}.stats{max-width:680px}.controls{max-width:680px}.btn{max-width:320px}#map{min-height:400px}}
-</style></head><body><div id="app"><header class="top"><h1>OFFROAD ADVENTURE · LIVE MAP</h1><p>Jalur GPS • Panduan peserta</p></header><section class="stats"><div class="stat"><small>Status GPS</small><strong id="gpsStatus">Belum aktif</strong></div><div class="stat"><small>Jarak ke jalur</small><strong id="routeStatus">—</strong></div><div class="stat"><small>Kecepatan</small><strong id="speed">—</strong></div></section><div id="map"></div><div class="controls"><button class="btn" id="locate">📍 LOKASI SAYA</button><button class="btn secondary" id="follow">🧭 IKUTI GPS: OFF</button></div><div class="note">Izinkan akses lokasi dan gunakan GPS HP. Panduan ini bukan pengganti arahan panitia.</div></div>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script><script>
-const routeData = {"type":"FeatureCollection","features":[{"type":"Feature","properties":{"name":"Jalur Offroad","source":"Converted from KML polygon exterior ring","route_type":"closed_loop"},"geometry":{"type":"LineString","coordinates":[[112.6468641056223,-8.02405571159913],[112.6471228174005,-8.024024934491628],[112.6475541494115,-8.024055788943356],[112.649022925752,-8.024397528330915],[112.6494715889737,-8.024471778576984],[112.64955690546,-8.024447672659363],[112.649788866718,-8.024505339088334],[112.6500903733637,-8.024614229738486],[112.6506035213972,-8.024822503885316],[112.6517244404352,-8.025297375395944],[112.6517936252248,-8.02525734313796],[112.6518533276929,-8.02509510227527],[112.6519881075373,-8.02452107894371],[112.6527204467581,-8.024706823776558],[112.6531774302797,-8.02487599499723],[112.6539034806968,-8.025299546468172],[112.6540840523883,-8.025380800762509],[112.65431587685,-8.025361295378241],[112.6549982465858,-8.025213984720104],[112.6558243553668,-8.024910089879791],[112.6561068061422,-8.02479473048366],[112.6563051120953,-8.024760496709156],[112.6566236014859,-8.02476013888954],[112.6568773164616,-8.024779196485857],[112.6570009826421,-8.024653339357462],[112.6570934070311,-8.02436830163515],[112.6571377148867,-8.024127194679519],[112.6576331953546,-8.024050706186072],[112.657887097588,-8.02397583305976],[112.6580448886443,-8.023904178460178],[112.658378428341,-8.023859168105126],[112.6587867798256,-8.023871863680558],[112.6600977201238,-8.024272104319055],[112.6603849283313,-8.023759687581665],[112.6606067537485,-8.02377396001981],[112.6609995263986,-8.02387388223521],[112.6612824381772,-8.023938717097964],[112.661634256315,-8.023929694203842],[112.6623513234773,-8.024042884852651],[112.6625331474759,-8.023995198952328],[112.6635202215284,-8.024144299091457],[112.6637776345941,-8.024171704847648],[112.6639942756482,-8.023710323500476],[112.6642832040478,-8.022974470403328],[112.6637196150689,-8.022756451176221],[112.6634366015288,-8.022616167370936],[112.66291917597,-8.022434318691147],[112.662284914787,-8.022168934177959],[112.6621325590361,-8.022433506590335],[112.6616751226824,-8.022277867330855],[112.661148669616,-8.022125329372974],[112.6607055333691,-8.021950087072254],[112.6605311446391,-8.022226074152375],[112.6601452462754,-8.022159858837538],[112.660008239703,-8.022203461393767],[112.6598575168558,-8.022167526908282],[112.6596647671732,-8.022113836956411],[112.6594540847745,-8.022132763607711],[112.6592721523514,-8.02218407594699],[112.6590825481437,-8.022243385175097],[112.6588850544844,-8.022202138662745],[112.6586923880286,-8.02221228554687],[112.6586313222428,-8.022281268829019],[112.6585473750807,-8.022373616309201],[112.6584976178286,-8.022406386804777],[112.6582254621935,-8.022402210854509],[112.657728811039,-8.022304052359976],[112.6571015429825,-8.022315822761472],[112.6564470103877,-8.02230600513414],[112.6560176690909,-8.022338059841323],[112.6558383673108,-8.022823835076707],[112.6557563449536,-8.023157999965202],[112.655672531048,-8.023530508696334],[112.655543867309,-8.023859239057414],[112.6551697118327,-8.023977212147205],[112.6545860421748,-8.023921154599796],[112.6543926641438,-8.023827585847847],[112.6533315692105,-8.023524109993213],[112.6534723319402,-8.023078827628726],[112.653810819331,-8.023007350728824],[112.654520745123,-8.022342076035752],[112.6544830922492,-8.022240552690475],[112.6539908465771,-8.02253441039636],[112.6539355114555,-8.022482957760587],[112.6537187819165,-8.022633962252383],[112.653492058153,-8.022783792870328],[112.6530499767106,-8.02282800496021],[112.653035708718,-8.02277879773832],[112.6533457390998,-8.022508702142389],[112.6533263740009,-8.022383608390633],[112.6535547518984,-8.021887526152383],[112.6539287909301,-8.021901746018457],[112.6543784209448,-8.022048573090174],[112.6547332433471,-8.022102556063984],[112.6549745476364,-8.022015445143506],[112.6550546614047,-8.021922911501017],[112.6557366808928,-8.021499607547918],[112.6557911244434,-8.021311615622796],[112.6556194187603,-8.021298753682657],[112.6553320605894,-8.021356352020222],[112.6551579591904,-8.021257175963218],[112.65525125433,-8.020822846339568],[112.6548782922582,-8.020756869033397],[112.6549853901433,-8.020431576222688],[112.6552972192925,-8.02042228506192],[112.6555718469228,-8.020259549719404],[112.6558482747077,-8.020055630491012],[112.6563711746844,-8.019836397578619],[112.6565667142519,-8.019582360355656],[112.6566918545278,-8.01890590407279],[112.6562317744747,-8.018770086584924],[112.6560165374643,-8.017807281244197],[112.6562067340943,-8.017719517410804],[112.656597949539,-8.017676664484938],[112.6565956900585,-8.017565766293531],[112.6564868256472,-8.017457438144632],[112.6563077687606,-8.017419798254565],[112.6560470828359,-8.017414415121054],[112.6551528532426,-8.017169322371746],[112.6539724985712,-8.017098879015045],[112.6523605339638,-8.01673619978928],[112.6512696156159,-8.016256118977932],[112.6504414825968,-8.016043788116932],[112.6496780535377,-8.015925337438501],[112.6485067590981,-8.015475549646172],[112.6465202816204,-8.014698451316027],[112.6456317354693,-8.014268694966447],[112.6456028462659,-8.015260088844409],[112.6456873290093,-8.016166076361095],[112.6460355404305,-8.017338471750147],[112.6460773534389,-8.017839617057813],[112.645848024517,-8.019064322036646],[112.6457515013426,-8.020249533478818],[112.6464787794829,-8.021861652205043],[112.6470036905221,-8.023566783067636],[112.6470919916939,-8.023941521210476],[112.6468641056223,-8.02405571159913]]}}]};
-const map=L.map('map',{zoomControl:true});L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap contributors'}).addTo(map);
-const route=L.geoJSON(routeData,{style:{color:'#00d4ff',weight:5,opacity:.9}}).addTo(map);map.fitBounds(route.getBounds(),{padding:[24,24]});setTimeout(()=>map.invalidateSize(),300);
-const coords=routeData.features[0].geometry.coordinates;const start=coords[0],finish=coords[coords.length-1];
-L.marker([start[1],start[0]]).addTo(map).bindPopup('START / LOOP');L.marker([finish[1],finish[0]]).addTo(map).bindPopup('FINISH / LOOP');
-let userMarker=null,accuracyCircle=null,watchId=null,follow=false,lastPos=null;
-function dist(a,b){const R=6371000,rad=Math.PI/180,dLat=(b[1]-a[1])*rad,dLon=(b[0]-a[0])*rad;const x=Math.sin(dLat/2)**2+Math.cos(a[1]*rad)*Math.cos(b[1]*rad)*Math.sin(dLon/2)**2;return 2*R*Math.atan2(Math.sqrt(x),Math.sqrt(1-x));}
-function nearestRouteDistance(p){let min=Infinity;for(let i=0;i<coords.length;i++){min=Math.min(min,dist(p,coords[i]));}return min;}
-function startGPS(){if(!navigator.geolocation){document.getElementById('gpsStatus').textContent='Tidak didukung';return;}if(watchId!==null)return;document.getElementById('gpsStatus').textContent='Mencari GPS…';watchId=navigator.geolocation.watchPosition(pos=>{const p=[pos.coords.longitude,pos.coords.latitude];lastPos=p;document.getElementById('gpsStatus').textContent='Aktif';document.getElementById('routeStatus').textContent=Math.round(nearestRouteDistance(p))+' m';document.getElementById('speed').textContent=pos.coords.speed==null?'—':Math.round(pos.coords.speed*3.6)+' km/j';const ll=[p[1],p[0]];if(!userMarker){userMarker=L.marker(ll,{icon:L.divIcon({className:'',html:'<div class="gps-dot"></div>',iconSize:[18,18],iconAnchor:[9,9]})}).addTo(map).bindPopup('Posisi Anda');accuracyCircle=L.circle(ll,{radius:pos.coords.accuracy,color:'#1688ff',fillOpacity:.08,weight:1}).addTo(map);}else{userMarker.setLatLng(ll);accuracyCircle.setLatLng(ll).setRadius(pos.coords.accuracy);}if(follow)map.setView(ll,Math.max(map.getZoom(),16));},e=>{document.getElementById('gpsStatus').textContent=e.message||'GPS gagal';watchId=null;},{enableHighAccuracy:true,maximumAge:3000,timeout:15000});}
-document.getElementById('locate').onclick=()=>{startGPS();if(lastPos)map.setView([lastPos[1],lastPos[0]],17);};document.getElementById('follow').onclick=e=>{follow=!follow;e.currentTarget.textContent='🧭 IKUTI GPS: '+(follow?'ON':'OFF');if(follow&&lastPos)map.setView([lastPos[1],lastPos[0]],17);};
-</script></body></html>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #0b1720;
+    color: white;
+}
+
+.app {
+    width: 100%;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    background: #0c1821;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 1000;
+    border-bottom: 1px solid #263b49;
+}
+
+.brand {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.brand-title {
+    font-size: 17px;
+    font-weight: 900;
+    letter-spacing: 1px;
+}
+
+.brand-subtitle {
+    font-size: 10px;
+    color: #9eabb5;
+    letter-spacing: 2px;
+}
+
+.live {
+    background: #143b2c;
+    color: #3ee68b;
+    border: 1px solid #2b8056;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.dashboard {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    background: #101f2b;
+    border-bottom: 1px solid #263b49;
+    z-index: 1000;
+}
+
+.stat {
+    padding: 10px 8px;
+    text-align: center;
+    border-right: 1px solid #263b49;
+}
+
+.stat-label {
+    font-size: 9px;
+    color: #9eabb5;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+}
+
+.stat-value {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.stat-value.small {
+    font-size: 12px;
+}
+
+#gpsStatus {
+    color: #f5bd45;
+}
+
+#trackStatus {
+    color: #aaa;
+}
+
+#distance {
+    color: #54d8ff;
+}
+
+#speed {
+    color: white;
+}
+
+.warning {
+    display: none;
+    padding: 10px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: bold;
+    background: #b52c2c;
+    color: white;
+    z-index: 1000;
+}
+
+.warning.active {
+    display: block;
+}
+
+#map {
+    flex: 1;
+    width: 100%;
+    min-height: 0;
+}
+
+.controls {
+    background: #0c1821;
+    padding: 10px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 7px;
+    z-index: 1000;
+    border-top: 1px solid #263b49;
+}
+
+.btn {
+    padding: 11px 5px;
+    border: none;
+    border-radius: 8px;
+    background: #1c3445;
+    color: white;
+    font-weight: bold;
+    font-size: 11px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.btn:hover {
+    background: #31566c;
+}
+
+.btn.active {
+    background: #117d4b;
+}
+
+.btn.sos {
+    background: #c62828;
+}
+
+.btn.sos:hover {
+    background: #e53935;
+}
+
+.footer {
+    background: #0c1821;
+    color: #81929f;
+    text-align: center;
+    font-size: 9px;
+    padding: 5px;
+}
+
+.vehicle-marker {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #087cf0;
+    border: 4px solid white;
+    box-shadow: 0 0 0 5px rgba(8,124,240,.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.start-marker {
+    background: #14a44d;
+    color: white;
+    border-radius: 8px;
+    padding: 7px 10px;
+    font-weight: bold;
+    font-size: 12px;
+    border: 2px solid white;
+    white-space: nowrap;
+}
+
+.finish-marker {
+    background: #d62828;
+    color: white;
+    border-radius: 8px;
+    padding: 7px 10px;
+    font-weight: bold;
+    font-size: 12px;
+    border: 2px solid white;
+    white-space: nowrap;
+}
+
+.leaflet-control-attribution {
+    font-size: 9px !important;
+}
+
+@media (max-width: 600px) {
+
+    .header {
+        padding: 10px 12px;
+    }
+
+    .brand-title {
+        font-size: 14px;
+    }
+
+    .brand-subtitle {
+        font-size: 8px;
+    }
+
+    .stat {
+        padding: 8px 3px;
+    }
+
+    .stat-label {
+        font-size: 8px;
+    }
+
+    .stat-value {
+        font-size: 14px;
+    }
+
+    .controls {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 5px;
+        padding: 7px;
+    }
+
+    .btn {
+        padding: 12px 2px;
+        font-size: 9px;
+        border-radius: 6px;
+    }
+
+    .footer {
+        font-size: 8px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <header class="header">
+        <div class="brand">
+            <div class="brand-title">🚙 OFFROAD ADVENTURE</div>
+            <div class="brand-subtitle">LIVE GPS TRACKING SYSTEM</div>
+        </div>
+
+        <div class="live">● LIVE MAP</div>
+    </header>
+
+    <section class="dashboard">
+
+        <div class="stat">
+            <div class="stat-label">GPS</div>
+            <div class="stat-value small" id="gpsStatus">WAITING</div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-label">TRACK STATUS</div>
+            <div class="stat-value small" id="trackStatus">--</div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-label">DISTANCE TO TRACK</div>
+            <div class="stat-value" id="distance">-- m</div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-label">SPEED</div>
+            <div class="stat-value" id="speed">0 km/h</div>
+        </div>
+
+    </section>
+
+    <div class="warning" id="offtrackWarning">
+        ⚠️ PERHATIAN! ANDA KELUAR DARI JALUR OFFROAD
+    </div>
+
+    <div id="map"></div>
+
+    <section class="controls">
+
+        <button class="btn" onclick="locateMe()">
+            📍 LOKASI
+        </button>
+
+        <button class="btn" id="followBtn" onclick="toggleFollow()">
+            🧭 FOLLOW
+        </button>
+
+        <button class="btn" onclick="fitRoute()">
+            🗺️ RUTE
+        </button>
+
+        <button class="btn" onclick="toggleFullscreen()">
+            ⛶ FULL
+        </button>
+
+        <button class="btn sos" onclick="sendSOS()">
+            🆘 SOS
+        </button>
+
+    </section>
+
+    <footer class="footer">
+        OFFROAD ADVENTURE LIVE MAP • OPENSTREETMAP
+    </footer>
+
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+
+// =====================================================
+// DATA JALUR OFFROAD
+// =====================================================
+
+// PENTING:
+// GANTI BAGIAN INI DENGAN routeData DARI HTML V1 ANDA.
+// Jangan mengubah koordinat jalur yang sudah ada.
+//
+// Contoh:
+// const routeData = {...};
+
+const routeData = {
+    "type": "FeatureCollection",
+    "features": []
+};
+
+// =====================================================
+// KONFIGURASI
+// =====================================================
+
+const OFFTRACK_THRESHOLD = 50;
+
+// Nomor WhatsApp panitia SOS.
+// Format: 628xxxxxxxxxx
+// Kosongkan jika belum tersedia.
+const SOS_PHONE = "";
+
+// =====================================================
+// MAP
+// =====================================================
+
+const map = L.map('map', {
+    zoomControl: true,
+    preferCanvas: true
+});
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; OpenStreetMap'
+}).addTo(map);
+
+// =====================================================
+// ROUTE
+// =====================================================
+
+let routeLayer = null;
+let routeCoordinates = [];
+
+if (routeData.features && routeData.features.length > 0) {
+
+    routeLayer = L.geoJSON(routeData, {
+        style: {
+            color: '#00d4ff',
+            weight: 6,
+            opacity: 0.9
+        }
+    }).addTo(map);
+
+    routeData.features.forEach(feature => {
+
+        if (feature.geometry.type === "LineString") {
+
+            routeCoordinates = feature.geometry.coordinates.map(
+                coord => [coord[1], coord[0]]
+            );
+
+        }
+
+        if (feature.geometry.type === "MultiLineString") {
+
+            feature.geometry.coordinates.forEach(line => {
+
+                line.forEach(coord => {
+                    routeCoordinates.push([coord[1], coord[0]]);
+                });
+
+            });
+
+        }
+
+    });
+
+    map.fitBounds(routeLayer.getBounds(), {
+        padding: [40, 40]
+    });
+
+} else {
+
+    map.setView([-8.024, 112.647], 15);
+
+}
+
+// =====================================================
+// START & FINISH
+// =====================================================
+
+if (routeCoordinates.length > 0) {
+
+    const start = routeCoordinates[0];
+    const finish = routeCoordinates[routeCoordinates.length - 1];
+
+    const startIcon = L.divIcon({
+        className: '',
+        html: '<div class="start-marker">🏁 START</div>',
+        iconSize: [70, 30],
+        iconAnchor: [35, 15]
+    });
+
+    const finishIcon = L.divIcon({
+        className: '',
+        html: '<div class="finish-marker">🏁 FINISH</div>',
+        iconSize: [80, 30],
+        iconAnchor: [40, 15]
+    });
+
+    L.marker(start, {
+        icon: startIcon
+    }).addTo(map);
+
+    L.marker(finish, {
+        icon: finishIcon
+    }).addTo(map);
+
+}
+
+// =====================================================
+// GPS MARKER
+// =====================================================
+
+const vehicleIcon = L.divIcon({
+    className: '',
+    html: '<div class="vehicle-marker">🚙</div>',
+    iconSize: [42, 42],
+    iconAnchor: [21, 21]
+});
+
+let vehicleMarker = null;
+let accuracyCircle = null;
+let currentPosition = null;
+let followGPS = false;
+let gpsWatch = null;
+
+// =====================================================
+// GPS
+// =====================================================
+
+function startGPS() {
+
+    if (!navigator.geolocation) {
+
+        document.getElementById('gpsStatus').innerText =
+            "NOT SUPPORTED";
+
+        return;
+
+    }
+
+    document.getElementById('gpsStatus').innerText =
+        "SEARCHING";
+
+    gpsWatch = navigator.geolocation.watchPosition(
+
+        gpsSuccess,
+
+        gpsError,
+
+        {
+            enableHighAccuracy: true,
+            maximumAge: 1000,
+            timeout: 15000
+        }
+
+    );
+
+}
+
+function gpsSuccess(position) {
+
+    const lat = position.coords.latitude;
+    const lng = position.coords.longitude;
+
+    currentPosition = {
+        lat: lat,
+        lng: lng
+    };
+
+    const latlng = [lat, lng];
+
+    document.getElementById('gpsStatus').innerText =
+        "ACTIVE";
+
+    document.getElementById('gpsStatus').style.color =
+        "#3ee68b";
+
+    // VEHICLE MARKER
+
+    if (!vehicleMarker) {
+
+        vehicleMarker = L.marker(latlng, {
+            icon: vehicleIcon,
+            zIndexOffset: 1000
+        }).addTo(map);
+
+    } else {
+
+        vehicleMarker.setLatLng(latlng);
+
+    }
+
+    // ACCURACY CIRCLE
+
+    const accuracy = position.coords.accuracy || 10;
+
+    if (!accuracyCircle) {
+
+        accuracyCircle = L.circle(latlng, {
+            radius: accuracy,
+            color: '#1685ff',
+            fillColor: '#1685ff',
+            fillOpacity: 0.12,
+            weight: 1
+        }).addTo(map);
+
+    } else {
+
+        accuracyCircle.setLatLng(latlng);
+        accuracyCircle.setRadius(accuracy);
+
+    }
+
+    // SPEED
+
+    let speed = position.coords.speed;
+
+    if (speed === null || speed === undefined) {
+        speed = 0;
+    }
+
+    speed = speed * 3.6;
+
+    document.getElementById('speed').innerText =
+        speed.toFixed(1) + " km/h";
+
+    // DISTANCE TO ROUTE
+
+    const distance = distanceToRoute(lat, lng);
+
+    document.getElementById('distance').innerText =
+        distance === null
+            ? "-- m"
+            : distance.toFixed(0) + " m";
+
+    // TRACK STATUS
+
+    if (distance === null) {
+
+        document.getElementById('trackStatus').innerText =
+            "NO ROUTE";
+
+    } else if (distance <= OFFTRACK_THRESHOLD) {
+
+        document.getElementById('trackStatus').innerText =
+            "ON TRACK";
+
+        document.getElementById('trackStatus').style.color =
+            "#3ee68b";
+
+        document.getElementById('offtrackWarning')
+            .classList.remove('active');
+
+    } else {
+
+        document.getElementById('trackStatus').innerText =
+            "OFF TRACK";
+
+        document.getElementById('trackStatus').style.color =
+            "#ff4444";
+
+        document.getElementById('offtrackWarning')
+            .classList.add('active');
+
+    }
+
+    // FOLLOW GPS
+
+    if (followGPS) {
+
+        map.setView(latlng, Math.max(map.getZoom(), 16), {
+            animate: true
+        });
+
+    }
+
+}
+
+function gpsError(error) {
+
+    document.getElementById('gpsStatus').innerText =
+        "GPS ERROR";
+
+    document.getElementById('gpsStatus').style.color =
+        "#ff4444";
+
+}
+
+// =====================================================
+// DISTANCE CALCULATION
+// =====================================================
+
+function distanceMeters(lat1, lon1, lat2, lon2) {
+
+    const R = 6371000;
+
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+
+    const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * Math.PI / 180) *
+        Math.cos(lat2 * Math.PI / 180) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return R * c;
+
+}
+
+// =====================================================
+// DISTANCE TO LINE SEGMENT
+// =====================================================
+
+function distanceToSegment(point, start, end) {
+
+    const lat = point[0];
+    const lng = point[1];
+
+    const lat1 = start[0];
+    const lng1 = start[1];
+
+    const lat2 = end[0];
+    const lng2 = end[1];
+
+    const meanLat = lat * Math.PI / 180;
+
+    const x = (lng - lng1) * 111320 * Math.cos(meanLat);
+    const y = (lat - lat1) * 111320;
+
+    const dx = (lng2 - lng1) * 111320 * Math.cos(meanLat);
+    const dy = (lat2 - lat1) * 111320;
+
+    const lengthSquared = dx * dx + dy * dy;
+
+    if (lengthSquared === 0) {
+        return Math.sqrt(x * x + y * y);
+    }
+
+    let t = (x * dx + y * dy) / lengthSquared;
+
+    t = Math.max(0, Math.min(1, t));
+
+    const closestX = t * dx;
+    const closestY = t * dy;
+
+    const distanceX = x - closestX;
+    const distanceY = y - closestY;
+
+    return Math.sqrt(distanceX * distanceX + distanceY * distanceY);
+
+}
+
+function distanceToRoute(lat, lng) {
+
+    if (routeCoordinates.length < 2) {
+        return null;
+    }
+
+    let minimumDistance = Infinity;
+
+    const point = [lat, lng];
+
+    for (let i = 0; i < routeCoordinates.length - 1; i++) {
+
+        const distance = distanceToSegment(
+            point,
+            routeCoordinates[i],
+            routeCoordinates[i + 1]
+        );
+
+        if (distance < minimumDistance) {
+            minimumDistance = distance;
+        }
+
+    }
+
+    return minimumDistance;
+
+}
+
+// =====================================================
+// BUTTONS
+// =====================================================
+
+function locateMe() {
+
+    if (!currentPosition) {
+
+        alert("GPS belum mendapatkan lokasi. Pastikan GPS aktif.");
+
+        return;
+
+    }
+
+    map.setView([
+        currentPosition.lat,
+        currentPosition.lng
+    ], 17);
+
+}
+
+function toggleFollow() {
+
+    followGPS = !followGPS;
+
+    const button = document.getElementById('followBtn');
+
+    if (followGPS) {
+
+        button.classList.add('active');
+        button.innerText = "🧭 FOLLOW ON";
+
+        if (currentPosition) {
+
+            map.setView([
+                currentPosition.lat,
+                currentPosition.lng
+            ], 17);
+
+        }
+
+    } else {
+
+        button.classList.remove('active');
+        button.innerText = "🧭 FOLLOW";
+
+    }
+
+}
+
+function fitRoute() {
+
+    if (routeLayer) {
+
+        map.fitBounds(routeLayer.getBounds(), {
+            padding: [40, 40]
+        });
+
+    }
+
+}
+
+function toggleFullscreen() {
+
+    const app = document.querySelector('.app');
+
+    if (!document.fullscreenElement) {
+
+        app.requestFullscreen().catch(() => {});
+
+    } else {
+
+        document.exitFullscreen();
+
+    }
+
+}
+
+// =====================================================
+// SOS
+// =====================================================
+
+function sendSOS() {
+
+    if (!currentPosition) {
+
+        alert("GPS belum aktif. Lokasi belum dapat dikirim.");
+
+        return;
+
+    }
+
+    const lat = currentPosition.lat;
+    const lng = currentPosition.lng;
+
+    const mapsLink =
+        "https://maps.google.com/?q=" + lat + "," + lng;
+
+    const message =
+        "🆘 SOS OFFROAD ADVENTURE\n\n" +
+        "Saya membutuhkan bantuan.\n\n" +
+        "📍 Lokasi:\n" +
+        mapsLink + "\n\n" +
+        "Koordinat:\n" +
+        lat + ", " + lng;
+
+    if (SOS_PHONE !== "") {
+
+        const whatsappURL =
+            "https://wa.me/" + SOS_PHONE +
+            "?text=" + encodeURIComponent(message);
+
+        window.open(whatsappURL, "_blank");
+
+    } else {
+
+        if (confirm(
+            "Nomor panitia SOS belum diatur.\n\n" +
+            "Bagikan lokasi melalui WhatsApp?"
+        )) {
+
+            window.open(
+                "https://wa.me/?text=" +
+                encodeURIComponent(message),
+                "_blank"
+            );
+
+        }
+
+    }
+
+}
+
+// =====================================================
+// INITIALIZATION
+// =====================================================
+
+startGPS();
+
+</script>
+
+</body>
+</html>
